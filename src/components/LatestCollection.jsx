@@ -33,6 +33,8 @@ const LatestCollection = () => {
           />
         ))}
       </div>
+
+      
     </div>
   );
 };
