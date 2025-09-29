@@ -1,12 +1,20 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react';
 import Product from './Product';
 import { ShopContext } from '../context/ShopContext';
 import {assets} from '../assets/assets'
 import Title from './../components/Title';
+import ProductItem from './../components/ProductItem';
 
 const Collection = () => {
 const {products}  = useContext(ShopContext);
 const [showFilter, setShowFilter] = useState(false);
+const [filterProducts, setFilterProducts] = useState([]);
+
+useEffect(()=>{
+
+  setFilterProducts(products);
+
+},[])
 
   return (
     <>
@@ -18,6 +26,7 @@ const [showFilter, setShowFilter] = useState(false);
       <p onClick={()=> setShowFilter(!showFilter)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>Filters
         <img src={assets.dropdown_icon} className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} alt="" />
       </p>
+
         <div className={`px-4 py-3 mt-2 w-56 ${showFilter ? '' : 'hidden'} sm:block`}>
         
         {/* Categories */}
@@ -65,8 +74,15 @@ const [showFilter, setShowFilter] = useState(false);
               <option value="high-low">Sort by: High to Low</option>
             </select>
         </div>
-      </div>
 
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
+          {
+            filterProducts.map((item,index)=>(
+              <ProductItem key={index} name={item.name} id={item._id} price={item.price} image={item.image}/>
+            ))
+          }
+        </div>
+      </div>
     </div>
 
     </>
