@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import Product from './Product';
 import { ShopContext } from '../context/ShopContext';
+import {assets} from '../assets/assets'
 
 const Collection = () => {
 const {products}  = useContext(ShopContext);
@@ -13,7 +14,9 @@ const [showFilter, setShowFilter] = useState(false);
 
       <div className='min-w-60'>
     
-      <p className='my-2 text-xl flex items-center cursor-pointer gap-2'>Filters</p>
+      <p onClick={()=> setShowFilter(!showFilter)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>Filters
+        <img src={assets.dropdown_icon} className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} alt="" />
+      </p>
         <div className={`px-4 py-3 mt-2 w-56 ${showFilter ? '' : 'hidden'} sm:block`}>
         
         {/* Categories */}
