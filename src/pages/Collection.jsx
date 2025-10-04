@@ -25,17 +25,26 @@ const toggleCategory = (e)=>{
   
 }
 
+const applyFilter = () => 
+{
+   
+}
+
+const toggleSubcategory = (e) =>{
+  if(subCategory.includes(e.target.value))
+    {
+      setSubCategory(prev=> prev.filter(item !== e.target.value ));
+    }
+    else{
+      setSubCategory(prev => [...prev, e.target.value]);
+    }
+}
+
 useEffect(()=>{
 
   setFilterProducts(products);
 
 },[])
-
-useEffect(()=>{
-
-console.log(category);
-
-},[category])
 
   return (
     <>
@@ -71,13 +80,13 @@ console.log(category);
             <p className="text-sm font-semibold mb-3">TYPE</p>
             <div className="flex flex-col gap-2 text-sm text-gray-700">
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" value={'Topwear'} /> Topwear
+                <input type="checkbox" className="w-4 h-4" value={'Topwear'} onChange={toggleSubcategory} /> Topwear
               </label>
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" value={'Bottomwear'} /> Bottomwear
+                <input type="checkbox" className="w-4 h-4" value={'Bottomwear'} onChange={toggleSubcategory} /> Bottomwear
               </label>
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" value={'Winterwear'} /> Winterwear
+                <input type="checkbox" className="w-4 h-4" value={'Winterwear'} onChange={toggleSubcategory} /> Winterwear
               </label>
             </div>
           </div>
