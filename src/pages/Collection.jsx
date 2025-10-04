@@ -9,12 +9,33 @@ const Collection = () => {
 const {products}  = useContext(ShopContext);
 const [showFilter, setShowFilter] = useState(false);
 const [filterProducts, setFilterProducts] = useState([]);
+const [category, setCategory] = useState([]);
+const [subCategory, setSubCategory] = useState([]);
+
+const toggleCategory = (e)=>{
+
+  if(category.includes(e.target.value))
+  {
+      setCategory(prev=> prev.filter(item !== e.target.value ))
+  }
+  else
+  {
+      setCategory(prev => [...prev, e.target.value]);
+  }
+  
+}
 
 useEffect(()=>{
 
   setFilterProducts(products);
 
 },[])
+
+useEffect(()=>{
+
+console.log(category);
+
+},[category])
 
   return (
     <>
@@ -34,13 +55,13 @@ useEffect(()=>{
             <p className="text-sm font-semibold mb-3">CATEGORIES</p>
             <div className="flex flex-col gap-2 text-sm text-gray-700">
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" value={'Men'} /> Men
+                <input type="checkbox" className="w-4 h-4" value={'Men'} onChange={toggleCategory} /> Men
               </label>
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" value={'Women'} /> Women
+                <input type="checkbox" className="w-4 h-4" value={'Women'} onChange={toggleCategory} /> Women
               </label>
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4" value={'Kids'} /> Kids
+                <input type="checkbox" className="w-4 h-4" value={'Kids'} onChange={toggleCategory}/> Kids
               </label>
             </div>
           </div>
