@@ -1,6 +1,7 @@
 import React, { useState, createContext } from 'react';
 import { products } from '../assets/assets';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export const ShopContext = createContext();
 
@@ -11,95 +12,80 @@ const ShopContextProvider = ({ children }) => {
   const [search, setSearch] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const navigate = useNavigate();
 
-  // 🛒 Add to Cart Function
+  // 🛒 Add to Cart
   const addToCart = (itemId, size) => {
     if (!size) {
-      toast.error('Please select a product size', {
-        position: 'top-center',
-      });
+      toast.error('Please select a product size', { position: 'top-center' });
       return;
     }
 
-    // Clone cart state safely
-    let updatedCart = structuredClone(cartItems);
-
-    // Initialize item object if it doesn't exist
-    if (!updatedCart[itemId]) {
-      updatedCart[itemId] = {};
-    }
-
-    // Increment or add new size quantity
+    const updatedCart = structuredClone(cartItems);
+    if (!updatedCart[itemId]) updatedCart[itemId] = {};
     updatedCart[itemId][size] = (updatedCart[itemId][size] || 0) + 1;
 
     setCartItems(updatedCart);
-
-    toast.success('Item added to cart', {
-      position: 'top-center',
-    });
+    toast.success('Item added to cart', { position: 'top-center' });
   };
 
-  // 🧮 Get total cart item count
+  // 🧮 Total item count
   const getCartCount = () => {
     let totalCount = 0;
-
     Object.keys(cartItems).forEach((itemId) => {
       Object.keys(cartItems[itemId]).forEach((size) => {
         totalCount += cartItems[itemId][size];
       });
     });
-
     return totalCount;
   };
 
-  // 🗑️ Remove item (optional helper)
+  // 🗑️ Remove item
   const removeFromCart = (itemId, size) => {
-    let updatedCart = structuredClone(cartItems);
-
+    const updatedCart = structuredClone(cartItems);
     if (updatedCart[itemId] && updatedCart[itemId][size]) {
       updatedCart[itemId][size] -= 1;
-
-      // If quantity hits 0, remove that size
-      if (updatedCart[itemId][size] <= 0) {
-        delete updatedCart[itemId][size];
-      }
-
-      // If no sizes remain, remove entire product
-      if (Object.keys(updatedCart[itemId]).length === 0) {
-        delete updatedCart[itemId];
-      }
+      if (updatedCart[itemId][size] <= 0) delete updatedCart[itemId][size];
+      if (Object.keys(updatedCart[itemId]).length === 0) delete updatedCart[itemId];
     }
-
     setCartItems(updatedCart);
   };
 
-  // 📝 Update item quantity directly
-const updateQuantity = (itemId, size, quantity) => {
-  setCartItems(prev => {
-    const updated = structuredClone(prev);
+  // 🔢 Update quantity directly
+  const updateQuantity = (itemId, size, quantity) => {
+    setCartItems((prev) => {
+      const updated = structuredClone(prev);
+      if (!updated[itemId]) return prev;
 
-    // If product doesn’t exist, return previous state
-    if (!updated[itemId]) return prev;
-
-    if (quantity === 0) {
-      // Remove the size completely
-      delete updated[itemId][size];
-
-      // Remove the product if it has no sizes left
-      if (Object.keys(updated[itemId]).length === 0) {
-        delete updated[itemId];
+      if (quantity === 0) {
+        delete updated[itemId][size];
+        if (Object.keys(updated[itemId]).length === 0) delete updated[itemId];
+      } else {
+        updated[itemId][size] = quantity;
       }
-    } else {
-      // Update quantity for that size
-      updated[itemId][size] = quantity;
+
+      return updated;
+    });
+  };
+
+  // 💰 Calculate total price
+  const getCartAmount = () => {
+    let totalAmount = 0;
+
+    for (const itemId in cartItems) {
+      const productInfo = products.find((product) => product._id === itemId);
+      if (!productInfo) continue;
+
+      for (const size in cartItems[itemId]) {
+        const quantity = cartItems[itemId][size];
+        if (quantity > 0) totalAmount += productInfo.price * quantity;
+      }
     }
 
-    return updated;
-  });
-};
+    return totalAmount;
+  };
 
-
-    const contextValue = {
+  const contextValue = {
     products,
     currency,
     delivery_fee,
@@ -110,8 +96,10 @@ const updateQuantity = (itemId, size, quantity) => {
     cartItems,
     addToCart,
     removeFromCart,
-    updateQuantity, 
+    updateQuantity,
     getCartCount,
+    getCartAmount,
+    navigate
   };
 
   return (
